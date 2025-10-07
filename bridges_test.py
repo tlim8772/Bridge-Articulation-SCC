@@ -1,5 +1,5 @@
 import unittest
-from find_bridges import *
+from bridges import *
 
 class Test(unittest.TestCase):
     def test1(self):

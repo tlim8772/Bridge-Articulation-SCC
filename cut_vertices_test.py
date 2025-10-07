@@ -1,5 +1,5 @@
 import unittest
-from find_cut_vertices import *
+from cut_vertices import *
 
 class Test(unittest.TestCase):
     def test1(self):
