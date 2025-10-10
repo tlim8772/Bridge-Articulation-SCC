@@ -1,2 +1,5 @@
 __pycache__/
 .vscode/
+a.out
+test.cpp
+aho_corasick_test

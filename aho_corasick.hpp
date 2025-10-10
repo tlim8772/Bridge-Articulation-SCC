@@ -83,10 +83,34 @@ struct AhoCorasick {
                         curr = curr->suffixLink;
                     }
                 }
-
+                
                 node->terminalLink = (node->suffixLink->word != "") ? node->suffixLink : node->suffixLink->terminalLink;
+                
+                for (auto [key, val] : node->nexts) {
+                    q.emplace(val, node, key);
+                }
             }
         }
-
     }
-};
+
+    void getWords(const string& s, unordered_set<string>& store, int i = 0, Node *node = nullptr) {
+        if (node == nullptr) node = root;
+        if (node->word != "" && !store.contains(node->word)) {
+            Node *curr = node;
+            while (curr != nullptr) {
+                store.insert(curr->word);
+                curr = curr->terminalLink;
+            }
+        }
+        if (i == s.size()) return;
+
+        char c = s[i];
+        if (node->nexts.contains(c)) {
+            return getWords(s, store, i + 1, node->nexts[c]);
+        } else if (node == root) {
+            return getWords(s, store, i + 1, node);
+        } else {
+            return getWords(s, store, i, node->suffixLink);
+        }
+    }
+};;
