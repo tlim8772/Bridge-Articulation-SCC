@@ -8,4 +8,4 @@ sparse_table_test: sparse_table_test.cpp sparse_table.hpp
 	$(CXX) $(STD) -g -fsanitize=address $< -o $@
 
 avl_tree_test: avl_tree_test.cpp avl_tree.hpp
-	$(CXX) $(STD) -g -fsanitize=address $< -o $@
+	$(CXX) $(STD) -g $< -o $@

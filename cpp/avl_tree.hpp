@@ -19,12 +19,12 @@ struct AvlNode {
     
     int weight = 1, height = 0;
     
-    K key;
+    K key, mi, ma;
     V val, range; // contains the (e.g sum of val) of the subtree rooted at this node
     
     AvlNode() {}
 
-    AvlNode(K key, V val): key(key), val(val), range(val) {}
+    AvlNode(K key, V val): key(key), mi(key), ma(key), val(val), range(val) {}
 
     static int getWeight(AvlNode *node) {
         return (node == nullptr) ? 0 : node->weight;
@@ -63,9 +63,13 @@ struct AvlTree {
 
     // n1, n2 can be nullptr, but par cannot be nullptr
     void recompute(Node *par, Node* l, Node* r) {
+        par->l = l, par->r = r;
+        
         par->weight = 1 + Node::getWeight(l) + Node::getWeight(r);
         par->height = 1 + max(Node::getHeight(l), Node::getHeight(r));
-        par->l = l, par->r = r;
+        
+        par->mi = (l == nullptr) ? par->key : par->l->mi;
+        par->ma = (r == nullptr) ? par->key : par->r->ma; 
         
         V rangeL = (l == nullptr) ? DefV : l->range;
         V rangeR = (r == nullptr) ? DefV : r->range;
@@ -227,6 +231,79 @@ struct AvlTree {
         return pair{K(), V()};
     }
 
-   
+    V rankRange(int l, int r) {
+        assert(root != nullptr && l >= 0 && r < root->weight);
+        return rankRange(l, r, root);
+    }
 
+    // rank range queries.
+    // invariant: l <= r, curr != nullptr
+    V rankRange(int l, int r, Node* curr) {
+        int wl = Node::getWeight(curr->l);
+        int wr = Node::getWeight(curr->r);
+
+        if (l == 0 && r == wl + wr) return curr->range;
+        if (l == r && l == wl) return curr->val;
+        
+        if (r < wl) {
+            return rankRange(l, r, curr->l);
+        }
+
+        if (r == wl) {
+            return reducer(rankRange(l, r - 1, curr->l), curr->val);
+        }
+
+        if (l > wl) {
+            return rankRange(l - wl - 1, r - wl - 1, curr->r);
+        }
+
+        if (l == wl) {
+            return reducer(curr->val, rankRange(0, r - wl - 1, curr->r));
+        }
+
+        // l < wl && r > wl
+        V lres = rankRange(l, wl - 1, curr->l);
+        V rres = rankRange(0, r - wl - 1, curr->r);
+        return reducer(lres, reducer(curr->val, rres));
+    }
+
+    V keyRange(K l, K r) {
+        return keyRange(l, r, root);
+    }
+
+    // invariant: l <= r.
+    // it is possible for curr to be null if our [l, r] is outside of [mi, ma].
+    V keyRange(K l, K r, Node *curr) {
+        if (curr == nullptr) return DefV;
+        if ((l < curr->mi || l == curr->mi) && (curr->ma < r || curr->ma == r)) return curr->range;
+        if (r < curr->mi || l > curr->ma) return DefV;
+        
+        int wl = Node::getWeight(curr->l);
+        int wr = Node::getWeight(curr->r);
+
+        if (r < curr->key) {
+            return keyRange(l, r, curr->l);
+        } else if (r == curr->key) {
+            return reducer(keyRange(l, r, curr->l), curr->val);
+        }
+
+        if (l > curr->key) {
+            return keyRange(l, r, curr->r);
+        } else if (l == curr->key) {
+            return reducer(curr->val, keyRange(l, r, curr->r));
+        }
+
+        V lres = keyRange(l, r, curr->l);
+        V rres = keyRange(l, r, curr->r);
+        return reducer(lres, reducer(curr->val, rres));
+    }
+
+    void printInOrder(Node *curr) {
+        if (curr == nullptr) return;
+        printInOrder(curr->l);
+        cout << curr->key << " " << curr->val << endl;
+        printInOrder(curr->r);
+    }
+
+    
 };
