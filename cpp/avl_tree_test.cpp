@@ -157,6 +157,16 @@ void test12() {
     //tree.printInOrder(tree.root);
 }
 
+void test13() {
+    auto summer = [](int x, int y) {return x + y;};
+    AvlTree<string, int, 0> tree{summer};
+    for (int i = 0; i < 26; i++) {
+        tree.insert(string(2, 'a' + i), i);
+    }
+    cout << tree.atKey("ff").second << endl;
+    cout << tree.atKey("fcd").first << endl;
+}
+
 int main() {
     test1();
     test2();
@@ -170,6 +180,7 @@ int main() {
     test10();
     test11();
     test12();
+    test13();
 }
 
 

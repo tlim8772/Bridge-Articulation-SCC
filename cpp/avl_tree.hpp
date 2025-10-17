@@ -205,6 +205,19 @@ struct AvlTree {
         return succ;
     }
 
+    pair<bool, V> atKey(K key) {
+        return atKey(key, root);
+    }
+
+    // return {true, val} if key exist else {false, DefV}
+    pair<bool, V> atKey(K key, Node* curr) {
+        if (curr == nullptr) return pair{false, DefV};
+        if (key == curr->key) return pair{true, curr->val};
+        if (key < curr->key) return atKey(key, curr->l);
+        if (key > curr->key) return atKey(key, curr->r);
+        return pair{false, DefV};
+    }
+
     pair<K, V> atRank(int rank) {
         assert(root != nullptr && rank < root->weight);
         return atRank(rank, root);
