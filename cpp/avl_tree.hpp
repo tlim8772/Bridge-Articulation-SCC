@@ -52,7 +52,7 @@ struct AvlTree {
         return nodeStore.back().get();
     }
 
-    // reducer should be identity function if 1 of the arguements is the default value for S
+    // reducer should be identity function if 1 of the arguements is the default value for V
     function<V(V,V)> reducer; 
 
     Node *root = nullptr;

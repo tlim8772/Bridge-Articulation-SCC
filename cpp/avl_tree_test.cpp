@@ -167,6 +167,16 @@ void test13() {
     cout << tree.atKey("fcd").first << endl;
 }
 
+void test14() {
+    auto summer = [](int x, int y) {return x * y;};
+    AvlTree<int, int, 1> tree{summer};
+    for (int i = 0; i < 5; i++) {
+        tree.insert(i, i);
+    }
+    assert(tree.keyRange(1, 5) == 24);
+    assert(tree.keyRange(2, 3) == 6);
+}
+
 int main() {
     test1();
     test2();
@@ -181,6 +191,7 @@ int main() {
     test11();
     test12();
     test13();
+    test14();
 }
 
 
