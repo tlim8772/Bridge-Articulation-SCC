@@ -3,3 +3,4 @@ __pycache__/
 a.out
 test.cpp
 aho_corasick_test
+avl_tree_test

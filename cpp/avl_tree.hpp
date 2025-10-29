@@ -11,9 +11,12 @@ concept Comparable = requires(K a, K b) {
 };
 
 template <typename T>
-concept Key = default_initializable<T> && Comparable<T>;
+concept ValueInitializable = requires { T{}; };
 
-template<Key K, default_initializable V>
+template <typename T>
+concept Key = ValueInitializable<T> && Comparable<T>;
+
+template<Key K, ValueInitializable V>
 struct AvlNode {
     AvlNode *l = nullptr, *r = nullptr;
     
@@ -36,7 +39,7 @@ struct AvlNode {
 };
 
 
-template <Key K, default_initializable V, V DefV = V{}>
+template <Key K, ValueInitializable V, V DefV = V{}>
 struct AvlTree {
     using Node = AvlNode<K, V>;
     
